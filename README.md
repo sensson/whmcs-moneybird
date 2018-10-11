@@ -8,6 +8,12 @@ make the change by raising a pull request.
 
 * WHMCS 7.6 or higher;
 * EU VAT addon enabled;
+* Composer
+
+# Installation
+
+* Run `composer install`;
+* Upload all files to `modules/addons/moneybird/`.
 
 # Configuration
 
