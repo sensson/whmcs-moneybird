@@ -3,9 +3,6 @@
 This module sets up synchronisation between WHMCS and Moneybird. At this time
 its a one way sync from WHMCS into Moneybird.
 
-Its freely available for anyone to use. If you have suggestions, please open an
-issue or make the change by raising a pull request.
-
 # Requirements
 
 * WHMCS 7.6 or higher;
@@ -16,9 +13,16 @@ issue or make the change by raising a pull request.
 
 * Run `composer install`;
 * Upload all files to `modules/addons/moneybird/`.
-* Configure the cron the follow cron to run every 5 minutes:
 
-  `php -q /path/to/whmcs/modules/addons/moneybird/cron.php`
+## Cron
+
+Configure a cronjob to run every 5 minutes.
+
+`php -q /path/to/whmcs/modules/addons/moneybird/cron.php`
+
+The cron is disabled by default. It can be managed through the addon
+settings in Setup > Addon Modules. We suggest to leave the cron disabled
+until you have configured your ledgers and taxes.
 
 ## Configuration
 
@@ -31,9 +35,6 @@ This addon requires you to configure:
 * The first invoice you want to synchronise;
 
 A token can be created via https://moneybird.com/user/applications/new.
-
-We suggest to leave the cron disabled until you have configured your ledgers
-and taxes.
 
 ## Ledgers and tax rates
 
