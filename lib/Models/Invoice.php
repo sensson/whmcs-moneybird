@@ -28,6 +28,7 @@ class Invoice extends \WHMCS\Billing\Invoice {
 
   private $discount_categories = array(
     'PromoDomain',
+    'PromoHosting',
     'GroupDiscount'
   );
 
