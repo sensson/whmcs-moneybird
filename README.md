@@ -1,8 +1,10 @@
 # Moneybird WHMCS addon
 
-This module sets up synchronisation between WHMCS and Moneybird. Its freely
-available for anyone to use. If you have suggestions, please open an issue or
-make the change by raising a pull request.
+This module sets up synchronisation between WHMCS and Moneybird. At this time
+its a one way sync from WHMCS into Moneybird.
+
+Its freely available for anyone to use. If you have suggestions, please open an
+issue or make the change by raising a pull request.
 
 # Requirements
 
@@ -14,33 +16,72 @@ make the change by raising a pull request.
 
 * Run `composer install`;
 * Upload all files to `modules/addons/moneybird/`.
+* Configure the cron the follow cron to run every 5 minutes:
 
-# Configuration
+  `php -q /path/to/whmcs/modules/addons/moneybird/cron.php`
+
+## Configuration
+
+You can activate this module via Setup > Addon Modules in WHMCS.
 
 This addon requires you to configure:
 
 * A Moneybird access token;
 * A Moneybird administration id;
-
-You can configure both of them after activating the module via Setup > Addon
-Modules. Once the module has been configured you can set up your ledgers
-and tax mappings.
+* The first invoice you want to synchronise;
 
 A token can be created via https://moneybird.com/user/applications/new.
 
-## Ledgers and tax
+We suggest to leave the cron disabled until you have configured your ledgers
+and taxes.
 
-If you want to record the revenue of your product groups on specific ledgers
-you can link them via Addons > Moneybird > Ledger mapping.
+## Ledgers and tax rates
 
-Tax rates can be mapped via Addons > Moneybird > Tax mapping.
+### Ledgers
+
+Moneybird calls ledgers categories. It allows you to group your revenue and
+expenses. You can map product groups to ledgers in Moneybird. This is done
+via Addons > Moneybird > Ledger mapping.
+
+It is recommended to map product groups to categories but not required.
+
+If you are unsure about ledgers, please consult with an accountant first.
+
+### Tax rates
+
+We strongly recommend to map your taxes in WHMCS to your tax rates in
+Moneybird. This is done via Addons > Moneybird > Tax mapping.
 
 If you are unsure about your taxes, please consult with an accountant first.
 
+## Enable the cron
+
+You can enable the cron via its setting in Setup > Addon Modules in WHMCS.
+
+# How does it work?
+
+Once you've got everything set up, configured your ledgers and taxes, you can
+enable the cron. From that point onwards it will synchronise your contacts
+and invoices to Moneybird. Invoices are synced once, contacts are checked
+and updated every time a new invoice is created.
+
 ## Contacts and invoices
 
-Every invoice and customer will get a new id in Moneybird. The addon will keep
-track of these links. The invoice id in WHMCS will be set as reference.
+The addon will keep track of both contacts and invoices in WHMCS and Moneybird.
+
+### Contacts
+
+Every contact is given a new id in Moneybird. This is done to prevent overlap
+since Moneybird uses the same numbering for both suppliers and customers. If
+a supplier in Moneybird would have the same id as a customer in WHMCS, its
+details would be changed.
+
+### Invoices
+
+WHMCS cannot be used as a single source of truth for accounting purposes. This
+is why invoices are given a new number in Moneybird. The original invoice id
+from WHMCS is set as a reference. This reference is also used by Moneybird
+to automatically map payments.
 
 # Development
 
@@ -54,7 +95,7 @@ If you want to contribute please:
 
 # Tests
 
-Sorry, no tests yet.
+Sorry, no tests yet. Contributions are much appreciated.
 
 # Support
 
@@ -68,4 +109,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Sensson does not provide commercial support or paid development.
+Sensson does not provide commercial support or paid development, neither are
+we trained accountants. Always consult with a professional.
