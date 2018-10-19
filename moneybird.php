@@ -36,7 +36,7 @@ function moneybird_config() {
       'description' => 'This module integrates Moneybird into WHMCS',
       'author'      => 'Sensson',
       'language'    => 'english',
-      'version'     => '0.0.1',
+      'version'     => '0.0.2',
       'fields'      => array(
         'AccessToken' => array(
           'FriendlyName' => 'MoneyBird access token',
@@ -147,6 +147,15 @@ function moneybird_activate() {
       }
     );
 
+    Capsule::schema()->create(
+      'mod_moneybird_workflow_links',
+      function ($table) {
+        $table->string('whmcs_payment_method', 255);
+        $table->text('moneybird_workflow_id');
+        $table->unique('whmcs_payment_method');
+      }
+    );
+
     return array(
       'status' => 'success',
       'description' => 'The Moneybird addon has been activated'
@@ -161,12 +170,33 @@ function moneybird_activate() {
 }
 
 /**
+ * Upgrade the installation
+ *
+ * @param array $vars
+ * @return none
+ */
+function moneybird_upgrade($vars) {
+  $version = $vars['version'];
+
+  // In 0.0.2 we have added mod_moneybird_workflow_links
+  if (version_compare($version, '0.0.2', '<')) {
+    Capsule::schema()->create(
+      'mod_moneybird_workflow_links',
+      function ($table) {
+        $table->string('whmcs_payment_method', 255);
+        $table->text('moneybird_workflow_id');
+        $table->unique('whmcs_payment_method');
+      }
+    );
+  }
+}
+
+/**
  * Deactivate the installation
  *
  * @return array Optional success/failure message
  */
-function moneybird_deactivate()
-{
+function moneybird_deactivate() {
   try {
     // TODO: Decide if this should be done as it could turn out to be a
     // small disaster if someone hits it by accident.
@@ -175,6 +205,7 @@ function moneybird_deactivate()
     // Capsule::schema()->dropIfExists('mod_moneybird_contact_links');
     // Capsule::schema()->dropIfExists('mod_moneybird_invoice_links');
     // Capsule::schema()->dropIfExists('mod_moneybird_tax_links');
+    // Capsule::schema()->dropIfExists('mod_moneybird_workflow_links');
 
     return array(
       'status' => 'success',

@@ -84,6 +84,13 @@ is why invoices are given a new number in Moneybird. The original invoice id
 from WHMCS is set as a reference. This reference is also used by Moneybird
 to automatically map payments.
 
+## Payment methods and workflows
+
+Different payment methods have different instructions. If you collect invoices
+via direct debit you probably don't want to add an instruction to pay via
+bank transfer. You can map your payment methods to different workflows. This
+is optional. If no mapping is configured it will pick the default workflow.
+
 # Development
 
 We strongly believe in the power of open source. This module is our way of

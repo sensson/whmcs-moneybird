@@ -10,6 +10,7 @@ use \WHMCS\Module\Addon\Moneybird\Models\Client;
 use \WHMCS\Module\Addon\Moneybird\Models\Links\LedgerLink;
 use \WHMCS\Module\Addon\Moneybird\Models\Links\InvoiceLink;
 use \WHMCS\Module\Addon\Moneybird\Models\Links\TaxLink;
+use \WHMCS\Module\Addon\Moneybird\Models\Links\WorkflowLink;
 
 class Invoice extends \WHMCS\Billing\Invoice {
   private $eu_countries = array(
@@ -175,9 +176,11 @@ class Invoice extends \WHMCS\Billing\Invoice {
     $salesInvoice->details = $salesInvoiceDetailsArray;
     $salesInvoice->invoice_date = $this->dateCreated->toDateString();
 
-    // Optional, perhaps something for a future version
-    // $salesInvoice->workflow_id = '234610081615840985';
-    // $salesInvoice->document_style_id = '234610081672464101';
+    // Optional, set a workflow if it has been configured
+    $workflow_link = WorkflowLink::find($this->paymentmethod);
+    if ($workflow_link != null) {
+      $salesInvoice->workflow_id = $workflow_link->moneybird_workflow_id;
+    }
 
     // Store the invoice and make it final by 'sending' it
     $invoice = $salesInvoice->save();
