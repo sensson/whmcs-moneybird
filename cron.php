@@ -103,10 +103,18 @@ function processFinancialMutations($params = array(), $debug = false) {
     return;
   }
 
+  // Set the period filter--order matters as modify changes the object
+  $date = new DateTime();
+  $current_month = $date->format('Ym');
+  $last_month = $date->modify('-1 month')->format('Ym');
+
   // Get all transactions from Moneybird
   $moneybird = createMoneybirdConnection();
   $mutations = $moneybird->FinancialMutation()->filter([
-    'period' => 'this_year',
+    'period' => sprintf("%s..%s",
+      $last_month,
+      $current_month
+    ),
   ]);
 
   $transaction_sync_count = 0;
