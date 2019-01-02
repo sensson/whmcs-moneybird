@@ -81,9 +81,84 @@ function syncInvoiceInBatch($params = array(), $debug = false) {
   }
 
   if ($debug) {
-    print("${invoice_sync_count} invoices processed.\r\n");
+    print("${invoice_sync_count} invoice(s) processed.\r\n");
   }
 }
+
+/**
+ * Hook: synchronise financial mutations with WHMCS
+ *
+ * @param none
+ * @return none
+ */
+function processFinancialMutations($params = array(), $debug = false) {
+  $module_settings = getMoneybirdSettings();
+
+  // Do not run syncInvoiceInBatch if EnableCron is disabled
+  if ($module_settings['EnableCron'] != 'on') {
+    if ($debug) {
+      print("Cron disabled\r\n");
+    }
+
+    return;
+  }
+
+  // Get all transactions from Moneybird
+  $moneybird = createMoneybirdConnection();
+  $mutations = $moneybird->FinancialMutation()->filter([
+    'period' => 'this_year',
+  ]);
+
+  $transaction_sync_count = 0;
+
+  foreach ($mutations as $mutation) {
+    $payments = $mutation->payments;
+
+    if (!empty($payments)) {
+      foreach ($payments as $payment) {
+        // Cast as an object
+        $payment = (object) $payment;
+
+        // Only process SalesInvoice transactions
+        if ($payment->invoice_type !== 'SalesInvoice') {
+          continue;
+        }
+
+        // We can't use InvoiceLink as it only contains the public invoice number
+        // and not the internal number. We may want to change that in the future
+        // as it would save an API call.
+        try {
+          $invoice = $moneybird->salesInvoice()->find((int) $payment->invoice_id);
+          $reference = $invoice->reference;
+        } catch (\Exception $e) {
+          if ($debug) {
+            print("{$payment->invoice_id} could not be found\r\n");
+          }
+
+          continue;
+        }
+
+        $invoice = Invoice::find($reference);
+        if ($invoice == false) {
+          if ($debug) {
+            print("{$reference} - Does not exist in WHMCS\r\n");
+          }
+
+          continue;
+        }
+
+        if ($invoice->addPaymentFromMoneybird((object) $payment, $moneybird) != null) {
+          $transaction_sync_count++;
+        }
+      }
+    }
+  }
+
+  if ($debug) {
+    print("{$transaction_sync_count} transaction(s) processed.\r\n");
+  }
+}
+
 
 // Example of how to synchronise a single invoice
 function syncInvoice($params) {
@@ -94,3 +169,4 @@ function syncInvoice($params) {
 
 // Run jobs, enable debug mode
 syncInvoiceInBatch(array(), true);
+processFinancialMutations(array(), true);

@@ -104,7 +104,7 @@ function moneybird_activate() {
         $table->dateTime('created_at');
         $table->dateTime('updated_at');
         $table->integer('whmcs_id');
-        $table->integer('moneybird_id');
+        $table->bigInteger('moneybird_id');
         $table->text('type');
         $table->integer('status');
         $table->text('message');
@@ -188,6 +188,9 @@ function moneybird_upgrade($vars) {
         $table->unique('whmcs_payment_method');
       }
     );
+
+    // Due to the lack of dbal/doctrine we have to run a raw statement here
+    Capsule::statement("ALTER TABLE `mod_moneybird_log` CHANGE `moneybird_id` `moneybird_id` BIGINT(20) NOT NULL;");
   }
 }
 
