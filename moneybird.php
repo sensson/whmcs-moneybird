@@ -134,6 +134,7 @@ function moneybird_activate() {
       function ($table) {
         $table->integer('whmcs_invoice_id');
         $table->text('moneybird_invoice_id');
+        $table->bigInteger('moneybird_id');
         $table->unique('whmcs_invoice_id');
       }
     );
@@ -186,6 +187,13 @@ function moneybird_upgrade($vars) {
         $table->string('whmcs_payment_method', 255);
         $table->text('moneybird_workflow_id');
         $table->unique('whmcs_payment_method');
+      }
+    );
+
+    Capsule::schema()->table(
+      'mod_moneybird_invoice_links',
+      function($table) {
+        $table->bigInteger('moneybird_id');
       }
     );
 

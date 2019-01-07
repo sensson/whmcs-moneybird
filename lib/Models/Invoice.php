@@ -195,6 +195,7 @@ class Invoice extends \WHMCS\Billing\Invoice {
     $invoice_link = new InvoiceLink();
     $invoice_link->whmcs_invoice_id = $this->id;
     $invoice_link->moneybird_invoice_id = $invoice->invoice_id;
+    $invoice_link->moneybird_id = $invoice->id;
     $invoice_link->save();
 
     logActivity('Invoice created at Moneybird. Invoice ID: ' . $this->id, 0);
