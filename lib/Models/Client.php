@@ -94,15 +94,16 @@ class Client extends \WHMCS\User\Client {
       }
     }
 
-    // Set all attributes
-    $contact->company_name = $this->companyName;
-    $contact->firstname = $this->firstName;
-    $contact->lastname = $this->lastName;
-    $contact->address1 = $this->address1;
-    $contact->address2 = $this->address2;
-    $contact->zipcode = $this->postcode;
-    $contact->city = $this->city;
-    $contact->country = $this->country;
+    // Set all attributes--html_entity_decode() is required because of WHMCS'
+    // ideas about exposing data ready to be displayed on a website
+    $contact->company_name = html_entity_decode($this->companyName);
+    $contact->firstname = html_entity_decode($this->firstName);
+    $contact->lastname = html_entity_decode($this->lastName);
+    $contact->address1 = html_entity_decode($this->address1);
+    $contact->address2 = html_entity_decode($this->address2);
+    $contact->zipcode = html_entity_decode($this->postcode);
+    $contact->city = html_entity_decode($this->city);
+    $contact->country = html_entity_decode($this->country);
     $contact->phone = $this->phoneNumber;
     $contact->delivery_method = 'Manual';
     $contact->tax_number = $this->tax_number;
