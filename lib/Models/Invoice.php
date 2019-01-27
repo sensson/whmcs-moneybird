@@ -275,7 +275,7 @@ class Invoice extends \WHMCS\Billing\Invoice {
       // This is required if $amount is less than the current amount due
       // See: https://developers.whmcs.com/api-reference/addinvoicepayment/
       // the amount paid, can be left undefined to take full amount of invoice
-      if (($invoice->total - $invoice->balance) - $amount >= 0) {
+      if (($this->total - $this->balance) - $amount >= 0) {
         $payment['amount'] = $amount;
       }
 
