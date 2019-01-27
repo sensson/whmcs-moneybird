@@ -287,7 +287,7 @@ class Invoice extends \WHMCS\Billing\Invoice {
       );
 
       // Add the actual payment
-      // $results = localAPI('AddInvoicePayment', $add_payment);
+      $results = localAPI('AddInvoicePayment', $add_payment);
 
       return $this;
     }
