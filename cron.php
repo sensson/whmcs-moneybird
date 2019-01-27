@@ -111,13 +111,26 @@ function processFinancialMutations($params = array(), $debug = false) {
 
   // Get all transactions from Moneybird
   $moneybird = createMoneybirdConnection();
-  $mutations = $moneybird->FinancialMutation()->filter([
+  $versions = $moneybird->FinancialMutation()->listVersions([
     'period' => sprintf("%s..%s",
       $last_month,
       $current_month
     ),
+    'mutation_type' => 'debit',
   ]);
 
+  foreach ($versions as $version) {
+    $ids[] = $version->id;
+  }
+
+  // Limit the id's to the top 100
+  arsort($ids);
+  $ids = array_slice($ids, 0, 100);
+
+  // Get the last mutations
+  $mutations = $moneybird->FinancialMutation()->getVersions($ids);
+
+  // Set sync count to 0
   $transaction_sync_count = 0;
 
   foreach ($mutations as $mutation) {
