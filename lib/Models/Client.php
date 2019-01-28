@@ -17,7 +17,17 @@ class Client extends \WHMCS\User\Client {
   public function getTaxNumberAttribute() {
     $customfield = Setting::where('module', 'eu_vat');
     $customfield = $customfield->where('setting', 'vatcustomfield');
-    return $this->getCustomFieldValueByName($customfield->get()[0]->value);
+    $tax_number = $this->getCustomFieldValueByName($customfield->get()[0]->value);
+
+    // WHMCS 7.6 and before
+    // Check if there is a value set by eu_vat, if so, return it
+    if (strlen($tax_number) > 0) {
+      return $tax_number;
+    }
+
+    // WHMCS 7.7
+    // If no tax number was found in the eu_vat addon, return the tax_id
+    return $this->tax_id;
   }
 
   /**

@@ -3,10 +3,11 @@
 namespace WHMCS\Module\Addon\Moneybird\Models;
 
 use \Illuminate\Database\Capsule\Manager as Capsule;
+use \WHMCS\Config\Setting as ConfigSetting;
 use \WHMCS\Service\Service;
 use \WHMCS\Domain\Domain;
 use \WHMCS\Billing\Payment\Transaction;
-use \WHMCS\Module\Addon\Setting;
+use \WHMCS\Module\Addon\Setting as AddonSetting;
 use \WHMCS\Module\Addon\Moneybird\Models\Client;
 use \WHMCS\Module\Addon\Moneybird\Models\Log;
 use \WHMCS\Module\Addon\Moneybird\Models\Links\LedgerLink;
@@ -59,16 +60,38 @@ class Invoice extends \WHMCS\Billing\Invoice {
   }
 
   /**
+   * Get the home country set in WHMCS
+   *
+   * @param none
+   * @return string
+   */
+  public function getMyHomeCountry() {
+    $eu_module = AddonSetting::where('module', 'eu_vat');
+    $eu_config = ConfigSetting::where('setting', 'TaxEUHomeCountry');
+
+    // WHMCS 7.6 and before
+    // This would evaulatue to true if the eu_vat addon is active
+    if ($eu_module->count() != 0) {
+      return $eu_module->where('setting', 'homecountry')->get()[0]->value;
+    }
+
+    // WHMCS 7.7
+    // This would evaluate to true if WHMCS 7.7 is active and data is migrated
+    if ($eu_config->count() != 0) {
+      return $eu_config->get()[0]->value;
+    }
+
+    return '';
+  }
+
+  /**
    * Eloquent Accessor to get the Moneybird invoice tax rate
    *
    * @param none
    * @return string
    */
   public function getTaxRateIdAttribute() {
-    // Find our home country
-    $home_country = Setting::where('module', 'eu_vat');
-    $home_country = $home_country->where('setting', 'homecountry')->get()[0];
-    $home_country = strtoupper($home_country->value);
+    $home_country = strtoupper($this->getMyHomeCountry());
     $client_country = strtoupper($this->client->country);
 
     // Map tax rates to WHMCS tax ID's
