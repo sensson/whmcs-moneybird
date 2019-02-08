@@ -1,22 +1,49 @@
 {
-    "name": "sensson/moneybird",
-    "description": "Moneybird integration for the WHMCS Billing Automation Platform",
-    "type": "whmcs-addon",
-    "version": "0.0.1",
-    "keywords": [
-        "whmcs",
-        "moneybird",
-        "addon module"
-    ],
-    "homepage": "https://www.sensson.net/",
-    "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "Sensson",
-            "email": "info@sensson.net"
-        }
-    ],
-    "require": {
-        "picqer/moneybird-php-client": "^0.18.2"
+  "name": "sensson/moneybird",
+  "description": "Moneybird integration for the WHMCS Billing Automation Platform",
+  "type": "whmcs-addon",
+  "version": "0.0.1",
+  "keywords": [
+    "whmcs",
+    "moneybird",
+    "addon module"
+  ],
+  "homepage": "https://www.sensson.net/",
+  "license": "Apache-2.0",
+  "authors": [{
+    "name": "Sensson",
+    "email": "info@sensson.net"
+  }],
+  "require": {
+    "picqer/moneybird-php-client": "^0.18.2"
+  },
+  "require-dev": {
+    "coenjacobs/mozart": "^0.3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sensson\\Dependencies\\": "src/Dependencies/"
     }
+  },
+  "extra": {
+    "mozart": {
+      "dep_namespace": "Sensson\\Dependencies\\",
+      "dep_directory": "/src/Dependencies/",
+      "classmap_directory": "/classes/dependencies/",
+      "classmap_prefix": "SENSSON_",
+      "packages": [
+        "picqer/moneybird-php-client"
+      ]
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "\"vendor/bin/mozart\" compose",
+      "composer dump-autoload"
+    ],
+    "post-update-cmd": [
+      "\"vendor/bin/mozart\" compose",
+      "composer dump-autoload"
+    ]
+  }
 }
