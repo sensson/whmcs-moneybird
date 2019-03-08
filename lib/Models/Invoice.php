@@ -234,7 +234,7 @@ class Invoice extends \WHMCS\Billing\Invoice {
    * @return \WHMCS\Billing\Invoice
    */
   public function addPaymentFromMoneybird(
-    object $payment,
+    $payment,
     \Picqer\Financials\Moneybird\Moneybird $moneybird
   ) {
     // Check if it is a valid payment
@@ -299,7 +299,7 @@ class Invoice extends \WHMCS\Billing\Invoice {
       // See: https://developers.whmcs.com/api-reference/addinvoicepayment/
       // the amount paid, can be left undefined to take full amount of invoice
       if (($this->total - $this->balance) - $amount >= 0) {
-        $payment['amount'] = $amount;
+        $payment->amount = $amount;
       }
 
       // We don't really care at this point, we want to be sure we're not
