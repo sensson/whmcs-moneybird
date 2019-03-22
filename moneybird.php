@@ -36,7 +36,7 @@ function moneybird_config() {
       'description' => 'This module integrates Moneybird into WHMCS',
       'author'      => 'Sensson',
       'language'    => 'english',
-      'version'     => '0.0.1',
+      'version'     => '0.0.2',
       'fields'      => array(
         'AccessToken' => array(
           'FriendlyName' => 'MoneyBird access token',
@@ -104,7 +104,7 @@ function moneybird_activate() {
         $table->dateTime('created_at');
         $table->dateTime('updated_at');
         $table->integer('whmcs_id');
-        $table->integer('moneybird_id');
+        $table->bigInteger('moneybird_id');
         $table->text('type');
         $table->integer('status');
         $table->text('message');
@@ -134,6 +134,7 @@ function moneybird_activate() {
       function ($table) {
         $table->integer('whmcs_invoice_id');
         $table->text('moneybird_invoice_id');
+        $table->bigInteger('moneybird_id');
         $table->unique('whmcs_invoice_id');
       }
     );
@@ -144,6 +145,15 @@ function moneybird_activate() {
         $table->integer('whmcs_customer_id');
         $table->text('moneybird_customer_id');
         $table->unique('whmcs_customer_id');
+      }
+    );
+
+    Capsule::schema()->create(
+      'mod_moneybird_workflow_links',
+      function ($table) {
+        $table->string('whmcs_payment_method', 255);
+        $table->text('moneybird_workflow_id');
+        $table->unique('whmcs_payment_method');
       }
     );
 
@@ -161,12 +171,43 @@ function moneybird_activate() {
 }
 
 /**
+ * Upgrade the installation
+ *
+ * @param array $vars
+ * @return none
+ */
+function moneybird_upgrade($vars) {
+  $version = $vars['version'];
+
+  // In 0.0.2 we have added mod_moneybird_workflow_links
+  if (version_compare($version, '0.0.2', '<')) {
+    Capsule::schema()->create(
+      'mod_moneybird_workflow_links',
+      function ($table) {
+        $table->string('whmcs_payment_method', 255);
+        $table->text('moneybird_workflow_id');
+        $table->unique('whmcs_payment_method');
+      }
+    );
+
+    Capsule::schema()->table(
+      'mod_moneybird_invoice_links',
+      function($table) {
+        $table->bigInteger('moneybird_id');
+      }
+    );
+
+    // Due to the lack of dbal/doctrine we have to run a raw statement here
+    Capsule::statement("ALTER TABLE `mod_moneybird_log` CHANGE `moneybird_id` `moneybird_id` BIGINT(20) NOT NULL;");
+  }
+}
+
+/**
  * Deactivate the installation
  *
  * @return array Optional success/failure message
  */
-function moneybird_deactivate()
-{
+function moneybird_deactivate() {
   try {
     // TODO: Decide if this should be done as it could turn out to be a
     // small disaster if someone hits it by accident.
@@ -175,6 +216,7 @@ function moneybird_deactivate()
     // Capsule::schema()->dropIfExists('mod_moneybird_contact_links');
     // Capsule::schema()->dropIfExists('mod_moneybird_invoice_links');
     // Capsule::schema()->dropIfExists('mod_moneybird_tax_links');
+    // Capsule::schema()->dropIfExists('mod_moneybird_workflow_links');
 
     return array(
       'status' => 'success',

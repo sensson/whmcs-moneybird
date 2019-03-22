@@ -20,5 +20,10 @@ class AdminPages extends Pages {
       'description' => 'Manage taxes',
       'type' => 'page',
     ),
+    'workflow_mapping' => array(
+      'class' => '\\WHMCS\\Module\\Addon\\Moneybird\\Controllers\\Admin\\WorkflowMappingController',
+      'description' => 'Manage workflows',
+      'type' => 'page',
+    ),
   );
 }

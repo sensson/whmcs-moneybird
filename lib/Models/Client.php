@@ -17,7 +17,17 @@ class Client extends \WHMCS\User\Client {
   public function getTaxNumberAttribute() {
     $customfield = Setting::where('module', 'eu_vat');
     $customfield = $customfield->where('setting', 'vatcustomfield');
-    return $this->getCustomFieldValueByName($customfield->get()[0]->value);
+    $tax_number = $this->getCustomFieldValueByName($customfield->get()[0]->value);
+
+    // WHMCS 7.6 and before
+    // Check if there is a value set by eu_vat, if so, return it
+    if (strlen($tax_number) > 0) {
+      return $tax_number;
+    }
+
+    // WHMCS 7.7
+    // If no tax number was found in the eu_vat addon, return the tax_id
+    return $this->tax_id;
   }
 
   /**
@@ -94,15 +104,16 @@ class Client extends \WHMCS\User\Client {
       }
     }
 
-    // Set all attributes
-    $contact->company_name = $this->companyName;
-    $contact->firstname = $this->firstName;
-    $contact->lastname = $this->lastName;
-    $contact->address1 = $this->address1;
-    $contact->address2 = $this->address2;
-    $contact->zipcode = $this->postcode;
-    $contact->city = $this->city;
-    $contact->country = $this->country;
+    // Set all attributes--html_entity_decode() is required because of WHMCS'
+    // ideas about exposing data ready to be displayed on a website
+    $contact->company_name = html_entity_decode($this->companyName);
+    $contact->firstname = html_entity_decode($this->firstName);
+    $contact->lastname = html_entity_decode($this->lastName);
+    $contact->address1 = html_entity_decode($this->address1);
+    $contact->address2 = html_entity_decode($this->address2);
+    $contact->zipcode = html_entity_decode($this->postcode);
+    $contact->city = html_entity_decode($this->city);
+    $contact->country = html_entity_decode($this->country);
     $contact->phone = $this->phoneNumber;
     $contact->delivery_method = 'Manual';
     $contact->tax_number = $this->tax_number;

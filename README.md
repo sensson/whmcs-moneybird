@@ -1,7 +1,6 @@
 # Moneybird WHMCS addon
 
-This module sets up synchronisation between WHMCS and Moneybird. At this time
-its a one way sync from WHMCS into Moneybird.
+This module sets up synchronisation between WHMCS and Moneybird.
 
 # Requirements
 
@@ -64,7 +63,8 @@ You can enable the cron via its setting in Setup > Addon Modules in WHMCS.
 Once you've got everything set up, configured your ledgers and taxes, you can
 enable the cron. From that point onwards it will synchronise your contacts
 and invoices to Moneybird. Invoices are synced once, contacts are checked
-and updated every time a new invoice is created.
+and updated every time a new invoice is created. It also synchronises
+financial mutations once a mutation has been linked to an invoice.
 
 ## Contacts and invoices
 
@@ -83,6 +83,21 @@ WHMCS cannot be used as a single source of truth for accounting purposes. This
 is why invoices are given a new number in Moneybird. The original invoice id
 from WHMCS is set as a reference. This reference is also used by Moneybird
 to automatically map payments.
+
+## Payment methods and workflows
+
+Different payment methods have different instructions. If you collect invoices
+via direct debit you probably don't want to add an instruction to pay via
+bank transfer. You can map your payment methods to different workflows. This
+is optional. If no mapping is configured it will pick the default workflow.
+
+## Financial mutations (payments)
+
+Once a mutation has been linked to an invoice in Moneybird it will be detected
+as a payment. The addon will create a unique transaction in WHMCS based on the
+data it gets from the financial mutation in Moneybird. If an invoice has been
+paid for already (for example via PayPal) it will not add a duplicate
+transaction.
 
 # Development
 
