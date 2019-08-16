@@ -88,7 +88,8 @@ function moneybird_activate() {
       Capsule::schema()->hasTable('mod_moneybird_ledger_links') and
       Capsule::schema()->hasTable('mod_moneybird_tax_links') and
       Capsule::schema()->hasTable('mod_moneybird_invoice_links') and
-      Capsule::schema()->hasTable('mod_moneybird_contact_links')
+      Capsule::schema()->hasTable('mod_moneybird_customer_links') and
+      Capsule::schema()->hasTable('mod_moneybird_workflow_links')
   ) {
     return array(
       'status' => 'success',
