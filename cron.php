@@ -119,6 +119,7 @@ function processFinancialMutations($params = array(), $debug = false) {
     'mutation_type' => 'debit',
   ]);
 
+  $ids = [];
   foreach ($versions as $version) {
     $ids[] = $version->id;
   }
