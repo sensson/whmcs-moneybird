@@ -17,6 +17,7 @@
         }
     ],
     "require": {
-        "picqer/moneybird-php-client": "^0.18.2"
+        "picqer/moneybird-php-client": "^0.26.0",
+        "guzzlehttp/guzzle": "^7.2"
     }
 }
