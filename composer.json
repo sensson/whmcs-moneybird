@@ -2,7 +2,7 @@
     "name": "sensson/moneybird",
     "description": "Moneybird integration for the WHMCS Billing Automation Platform",
     "type": "whmcs-addon",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "keywords": [
         "whmcs",
         "moneybird",
@@ -17,6 +17,7 @@
         }
     ],
     "require": {
-        "picqer/moneybird-php-client": "^0.18.2"
+        "picqer/moneybird-php-client": "^0.26.0",
+        "guzzlehttp/guzzle": "^7.2"
     }
 }
