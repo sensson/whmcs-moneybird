@@ -4,7 +4,7 @@ This module sets up synchronisation between WHMCS and Moneybird.
 
 # Requirements
 
-* WHMCS 7.6 or higher;
+* WHMCS 8 or higher (use version 0.0.2 for version 7);
 * EU VAT addon enabled;
 * Composer
 
