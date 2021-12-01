@@ -16,7 +16,7 @@ that WHMCS often includes old and insecure libraries.
 
 The second reason is about PHP itself. Composer ensures you get
 the right dependency for your PHP version. We don't want to force
-you into a certain PHP version. Composers gives you this flexibility.
+you into a certain PHP version. Composer gives you this flexibility.
 
 If Composer is not for you, you can get the latest release from
 [our releases page](https://github.com/sensson/whmcs-moneybird/releases).
