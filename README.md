@@ -10,8 +10,16 @@ This module sets up synchronisation between WHMCS and Moneybird.
 
 # Installation
 
-* Run `composer install`;
-* Upload all files to `modules/addons/moneybird/`.
+* Run `composer install`
+* Upload all files to `modules/addons/moneybird/`
+
+Is youre WHMCS installation on a cPanel? Then try following the following steps:
+
+* Upload all files to modules/addons/moneybird/ with FTP
+* Run 'cd /home/<accountname>/public_html/accounts/modules/addons/moneybird'
+* Run 'composer install'
+
+Where <accountname> is your specific cPanel installation account name. Check also if the initial path to your installation is correct. It might be /home2/ or something else. 
 
 ## Cron
 
