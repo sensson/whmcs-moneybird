@@ -8,17 +8,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        php-version: ['7.2', '7.3', '7.4', '8.1', '8.2', '8.3']
     steps:
-    - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        draft: false
-        prerelease: false
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Install dependencies
+        run: composer update --no-dev --prefer-dist --no-progress
+
+      - name: Build package
+        run: |
+          mkdir -p build/moneybird
+          rsync -a --exclude='.git' --exclude='.github' --exclude='build' ./ build/moneybird/
+          (cd build && zip -r "../moneybird-${{ github.ref_name }}-php${{ matrix.php-version }}.zip" moneybird)
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'moneybird-${{ github.ref_name }}-php${{ matrix.php-version }}.zip'
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          token: ${{ secrets.GITHUB_TOKEN }}
