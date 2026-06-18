@@ -20,6 +20,12 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
 
+      - name: Set version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          sed -i -E "s/(\"version\": \")[^\"]*/\1${version}/" composer.json
+          sed -i -E "s/('version'[[:space:]]*=> ')[^']*/\1${version}/" moneybird.php
+
       - name: Install dependencies
         run: composer update --no-dev --prefer-dist --no-progress
 
