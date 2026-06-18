@@ -34,6 +34,7 @@ jobs:
         with:
           artifacts: 'moneybird-${{ github.ref_name }}-php${{ matrix.php-version }}.zip'
           allowUpdates: true
+          generateReleaseNotes: true
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
           token: ${{ secrets.GITHUB_TOKEN }}
