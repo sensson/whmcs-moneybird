@@ -20,7 +20,6 @@ you into a certain PHP version. Composer gives you this flexibility.
 
 If Composer is not for you, you can get the latest release from
 [our releases page](https://github.com/sensson/whmcs-moneybird/releases).
-This is unsupported right now.
 
 ## Installation
 
